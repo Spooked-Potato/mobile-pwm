@@ -16,13 +16,13 @@ Configure the environment variables:
 
     cp .env.example .env
 
-    Then, update the .env file with your own environment variables.
+Then, update the .env file with your own environment variables.
 
 Start the server:
 
     npm start
 
-The server should now be running at `http://localhost:3000.´
+The server should now be running at http://localhost:3000.
 
 # Dependencies
 
