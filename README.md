@@ -6,31 +6,23 @@ Brief description of the project goes here.
 
 To install the project, follow these steps:
 
-    Clone the repository:
+    Clone the repository: https://github.com/Spooked-Potato/mobile-pwm.git
 
-bash
+Install the dependencies:
 
-git clone https://github.com/your-username/your-repository.git
+    npm install
 
-    Install the dependencies:
+Configure the environment variables:
 
-npm install
+    cp .env.example .env
 
-    Configure the environment variables:
+    Then, update the .env file with your own environment variables.
 
-bash
+Start the server:
 
-cp .env.example .env
+    npm start
 
-Then, update the .env file with your own environment variables.
-
-    Start the server:
-
-sql
-
-npm start
-
-The server should now be running at http://localhost:3000.
+The server should now be running at `http://localhost:3000.´
 
 # Dependencies
 
