@@ -1,7 +1,8 @@
-Project Title
+# Project Title
 
 Brief description of the project goes here.
-Installation
+
+# Installation
 
 To install the project, follow these steps:
 
@@ -30,7 +31,8 @@ sql
 npm start
 
 The server should now be running at http://localhost:3000.
-Dependencies
+
+# Dependencies
 
 List of dependencies used in the project:
 
@@ -39,7 +41,7 @@ List of dependencies used in the project:
     dotenv
     etc.
 
-Usage
+# Usage
 
 Instructions on how to use the project go here. Include examples of how to use the API, how to run tests, etc.
 Contributing
