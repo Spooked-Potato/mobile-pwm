@@ -1,0 +1,69 @@
+:root {
+  --main-color: #053160;
+  --sub-color: #031e3c;
+  --button-color: #ffc80b;
+}
+
+*,
+::before,
+::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  line-height: calc(1.5em + 0.2vw) !important;
+  font: inherit;
+  font-size: 10px;
+}
+
+img,
+picture,
+svg,
+video {
+  display: block;
+  max-width: 100%;
+}
+
+html,
+body {
+  max-width: 100%;
+  min-height: 100vh;
+}
+
+html {
+  background-color: var(--color-blue-dark);
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  background-color: var(--color-blue-soft);
+  max-width: 800px;
+  margin: 0 auto;
+  justify-content: space-between;
+}
+
+button {
+  border: none;
+  background-color: transparent;
+  color: var(--color-yellow);
+  cursor: pointer;
+  font-size: clamp(2.5rem, 3vw, 3.5rem);
+  font-weight: bold;
+  flex: 1;
+}
+
+#info {
+  display: flex;
+  height: var(--button-height);
+}
+
+#menu {
+  display: flex;
+  height: var(--button-height);
+}
+
+#controller {
+  display: flex;
+}
+@media only screen and (min-width: 50em) {
+}
