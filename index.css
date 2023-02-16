@@ -1,7 +1,9 @@
 :root {
-  --main-color: #053160;
-  --sub-color: #031e3c;
-  --button-color: #ffc80b;
+  --color-blue-soft: #053160;
+  --color-blue-dark: #031e3c;
+  --color-yellow: #ffc80b;
+
+  --button-height: 92px;
 }
 
 *,
