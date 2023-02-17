@@ -3,7 +3,13 @@
   --color-blue-dark: #031e3c;
   --color-yellow: #ffc80b;
 
+  --primary-color: #bfd11f;
+  --secondary-color: #121213;
+  --terciary-color: #2c2b27;
+
   --button-height: 92px;
+
+  --slider-position: 10%;
 }
 
 *,
@@ -56,6 +62,28 @@ button {
   justify-content: center;
 }
 
+input {
+  background-color: red;
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+}
+
+.range {
+  position: relative;
+  display: flex;
+  flex: 1;
+}
+
+.range-bar {
+  flex: 1;
+  width: 100%;
+  transform-origin: left;
+  transform: scaleX(0.5);
+  background-color: var(--color-yellow);
+  pointer-events: none;
+}
+
 #info {
   display: flex;
   height: var(--button-height);
@@ -67,7 +95,14 @@ button {
 }
 
 #controller {
+  flex: 1;
   display: flex;
+}
+
+#volume {
+  display: flex;
+  width: 100%;
+  flex: 1;
 }
 @media only screen and (min-width: 50em) {
 }

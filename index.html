@@ -5,6 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="index.css" />
+    <script type="module" src="script.js"></script>
     <title>Document</title>
   </head>
   <body>
@@ -48,9 +49,17 @@
         </svg>
       </button>
     </div>
-    <div id="volume">
-      <input type="range" />
+
+    <div id="volume" class="range">
+      <div class="range-bar"></div>
+      <input type="range" min="0" max="100" value="10" />
     </div>
+
+    <div id="scrub" class="range">
+      <div class="range-bar"></div>
+      <input type="range" min="0" max="100" value="10" />
+    </div>
+
     <div id="menu">
       <button>MENU</button>
     </div>
