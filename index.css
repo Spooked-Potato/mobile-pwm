@@ -1,34 +1,22 @@
 :root {
-  --color-blue-soft: #053160;
+  /*BLUES*/
+  --color-blue-light: #053160;
   --color-blue-dark: #031e3c;
-  --color-yellow: #ffc80b;
 
-  --primary-color: #bfd11f;
-  --secondary-color: #121213;
-  --terciary-color: #2c2b27;
+  /*YELLOWS*/
+  --color-yellow: #ffc80b;
 
   --button-height: 92px;
 
   --slider-position: 10%;
+
+  --speed: 0.2s;
 }
 
-*,
-::before,
-::after {
-  margin: 0;
+* {
   padding: 0;
+  margin: 0;
   box-sizing: border-box;
-  line-height: calc(1.5em + 0.2vw) !important;
-  font: inherit;
-  font-size: 10px;
-}
-
-img,
-picture,
-svg,
-video {
-  display: block;
-  max-width: 100%;
 }
 
 html,
@@ -42,9 +30,10 @@ html {
 }
 
 body {
+  position: relative;
   display: flex;
   flex-direction: column;
-  background-color: var(--color-blue-soft);
+  background-color: var(--color-blue-light);
   max-width: 800px;
   margin: 0 auto;
   justify-content: space-between;
@@ -58,21 +47,45 @@ button {
   font-size: clamp(2.5rem, 3vw, 3.5rem);
   font-weight: bold;
   flex: 1;
-  display: flex;
-  justify-content: center;
 }
 
-input {
-  background-color: red;
+button:active {
+  transform: scale(0.9);
+}
+
+#info {
+  display: flex;
+  height: var(--button-height);
+}
+
+#menu {
+  display: flex;
+  height: var(--button-height);
+  justify-self: end;
+}
+
+#controller {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  flex: 1;
+}
+
+#volume {
+  display: flex;
+  flex: 1;
+}
+
+input[type="range"] {
   position: absolute;
   inset: 0;
   opacity: 0;
 }
 
 .range {
+  flex: 1;
   position: relative;
   display: flex;
-  flex: 1;
 }
 
 .range-bar {
@@ -84,25 +97,26 @@ input {
   pointer-events: none;
 }
 
-#info {
-  display: flex;
-  height: var(--button-height);
+.toggle {
 }
 
-#menu {
-  display: flex;
-  height: var(--button-height);
+.toggle > * {
+  display: none;
 }
 
-#controller {
-  flex: 1;
-  display: flex;
+#menu-container {
+  position: absolute;
+  inset: 0;
+  bottom: var(--button-height);
+  background-color: var(--color-yellow);
+  transform: scaleY(0);
+  transform-origin: bottom;
+  transition: transform var(--speed) ease;
 }
-
-#volume {
-  display: flex;
-  width: 100%;
-  flex: 1;
+/* #controller > button{
+  width: 30px;
+  height: 60px;
 }
-@media only screen and (min-width: 50em) {
-}
+#controller > button:nth-child(2){
+  width: 50px;
+} */
