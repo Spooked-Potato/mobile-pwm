@@ -1,15 +1,30 @@
-import Component from "./component.js";
+import Component from "./Component.js";
 
 export default class Button extends Component {
-  constructor(elemID) {
-    super(elemID);
+  constructor(elemID, callback) {
+    super(elemID, callback);
+
+    if (this.element) this.element.onclick = () => this.callback();
   }
 
-  get onClick() {}
-  set onClick(callback) {
-    console.log("asdasda");
-    this.element.onclick = (e) => {
-      callback("button clicked");
-    };
+  setElement(element) {
+    super.setElement(element);
+    this.element.onclick = () => this.callback();
+  }
+
+  get Text() {
+    return this.element.querySelector("label").innerText;
+  }
+
+  set Text(value) {
+    this.element.querySelector("label").innerText = value;
+  }
+
+  get color() {
+    return this.element.querySelector("label").style.color;
+  }
+
+  set color(value) {
+    this.element.querySelector("label").style.color = value;
   }
 }

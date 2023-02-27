@@ -5,13 +5,14 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Music streaming app</title>
+
     <link rel="stylesheet" href="style.css" />
-    <script type="module" src="script.js"></script>
+    <script type="module" src="main.js"></script>
   </head>
   <body>
     <div id="info">
       <button id="info-button" class="toggle">
-        <label>info</label>
+        <label>Music Player</label>
         <svg
           width="100%"
           height="70%"
@@ -75,7 +76,9 @@
       <input type="range" min="0" max="100" value="10" />
     </div>
     <div id="menu">
-      <div id="menu-container">asdasdasd</div>
+      <div id="menu-container">
+        <div class="lists-container"></div>
+      </div>
       <button id="menu-button" class="toggle">
         <svg
           width="100%"
@@ -100,5 +103,23 @@
         </svg>
       </button>
     </div>
+    <template class="list-item">
+      <li>
+        <label> item default</label>
+        <div type="button" class="toggle">
+          <svg
+            width="100%"
+            height="100%"
+            viewBox="0 0 4 5"
+            fill="var( --color-blue-light)"
+          >
+            <path
+              d="M0,3.681l1.397,-1.416l-1.397,-1.416l0.838,-0.849l2.236,2.265l-2.236,2.265l-0.838,-0.849Z"
+              style="fill: #053160"
+            />
+          </svg>
+        </div>
+      </li>
+    </template>
   </body>
 </html>
