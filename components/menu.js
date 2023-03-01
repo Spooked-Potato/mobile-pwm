@@ -1,3 +1,4 @@
+import Button from "./Button.js";
 import Component from "./Component.js";
 import ListButton from "./ListButton.js";
 import ToggleButton from "./ToggleButton.js";
@@ -7,18 +8,19 @@ export default class Menu extends Component {
   #menuContainer;
   #menuButton;
   #backButton;
-  #currentList;
-  #listContainer;
+  #currentList = null;
   #isOpen = false;
-  constructor(elemID, callback) {
-    super(elemID, callback);
+
+  constructor(elementId, callback) {
+    super(elementId, callback);
 
     this.#menuButton = new ToggleButton("#menu-button", (value) => {
       this.#isOpen ? this.close() : this.open();
     });
 
     this.#backButton = new Button("#menu-back-button", (value) => {
-      this.#deleteList(this.#menuContainer.children.lenght - 1);
+      const index = this.#menuContainer.children.length - 1;
+      this.#deleteList(index);
     });
 
     this.#menuContainer = this.element.querySelector("#menu-container");
@@ -27,39 +29,47 @@ export default class Menu extends Component {
   #createList(data) {
     const ul = document.createElement("ul");
 
-    data.forEach((item) => {
-      const listButton = new ListButton(item, () => {
-        if (item.type === "folder") {
-          this.#createList(item.children);
+    data.forEach((itemData) => {
+      const listButton = new ListButton(itemData, () => {
+        if (itemData.type === "folder") {
+          this.#createList(itemData.children);
         } else {
-          this.callback(item);
+          this.callback(itemData);
         }
       });
       ul.appendChild(listButton.element);
     });
 
-    this.#listContainer.appendChild(ul);
+    if (this.#currentList) {
+      this.#currentList.style.transform = "translateX(-100%)";
+    }
+    this.#menuContainer.appendChild(ul);
     this.#currentList = ul;
 
-    resquestAnimationFrame(() => {
-      this.#currentList.style.transform = "translateX(0)";
-    });
-    this.#backButton.displayed = thuis.#menuContainer.children.lenght > 1;
+    requestAnimationFrame(
+      () => (this.#currentList.style.transform = "translateX(0)")
+    );
+
+    this.#menuContainer.children.length > 1
+      ? (this.#backButton.displayed = true)
+      : (this.#backButton.displayed = false);
   }
 
   #deleteList(index = null) {
     if (index !== null) {
+      console.log(index);
       const list = this.#menuContainer.children[index];
       this.#menuContainer.removeChild(list);
-
       this.#currentList =
         this.#menuContainer.children[this.#menuContainer.children.length - 1];
-      this.#currentList.style.transform = "translateX(0)s";
+      this.#currentList.style.transform = "translateX(0)";
     } else {
       this.#menuContainer.innerHTML = "";
       this.#currentList = null;
     }
-    this.#backButton.displayed = thuis.#menuContainer.children.lenght > 1;
+    this.#menuContainer.children.length > 1
+      ? (this.#backButton.displayed = true)
+      : (this.#backButton.displayed = false);
   }
 
   open() {
@@ -80,11 +90,17 @@ export default class Menu extends Component {
     this.#isOpen = false;
   }
 
+  setTrail(trail) {
+    if (!this.#isOpen) return;
+    console.log(trail);
+  }
+
   get data() {
     return this.#menuData;
   }
 
-  set data(data) {
-    this.#menuData = value;
+  set data(val) {
+    this.#menuData = val;
+    //if opened, paint trail.
   }
 }

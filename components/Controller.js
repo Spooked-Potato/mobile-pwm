@@ -25,7 +25,7 @@ export default class Controller extends Component {
         : this.callback("pause");
     });
   }
-  setSate(state) {
+  setState(state) {
     this.currentState = state;
     let val = 0;
     switch (this.currentState) {

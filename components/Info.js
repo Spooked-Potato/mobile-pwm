@@ -1,5 +1,5 @@
 import Component from "./Component.js";
-import ToggleButton from "./ToggleButton";
+import ToggleButton from "./ToggleButton.js";
 
 export default class Info extends Component {
   #infoContainer;
@@ -11,23 +11,23 @@ export default class Info extends Component {
     this.#infoContainer = this.element.querySelector("#info-container");
 
     this.#infoButton = new ToggleButton("#info-button", (value) => {
-      this.#isOpen ? this.close() : this.#isOpen();
-      this.callback(this.#isOpened);
+      this.#isOpen ? this.close() : this.open();
+      this.callback(this.#isOpen);
     });
   }
 
   open() {
-    if (this.#isOpened) return;
+    if (this.#isOpen) return;
     this.#infoContainer.style.transform = "scaleY(1)";
     this.#infoButton.toggle(1);
-    this.#isOpened = true;
+    this.#isOpen = true;
   }
 
   close() {
-    if (!this.#isOpened) return;
+    if (!this.#isOpen) return;
     this.#infoContainer.style.transform = "scaleY(0)";
     this.#infoButton.toggle(0);
-    this.#isOpened = false;
+    this.#isOpen = false;
   }
 
   update(data) {

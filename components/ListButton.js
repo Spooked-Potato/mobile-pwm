@@ -2,8 +2,8 @@ import Button from "./Button.js";
 
 export default class ListButton extends Button {
   #ListButtonData;
-  constructor(data) {
-    super();
+  constructor(data, callback) {
+    super(null, callback);
     this.#ListButtonData = data;
 
     const divElement = document.createElement("div");

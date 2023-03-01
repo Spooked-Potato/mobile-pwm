@@ -10,7 +10,7 @@ export default class RangeBar extends Component {
     this.#rangeBar = this.element.querySelector(".range-bar");
 
     this.#rangeInput.oninput = () => {
-      const value = this.#rangeInput.value;
+      this.value = this.#rangeInput.value;
       this.callback(this.value);
     };
   }
@@ -20,6 +20,6 @@ export default class RangeBar extends Component {
   }
 
   set value(val) {
-    this.#rangeBar.style.transform = `scaleX(${value / 100})`;
+    this.#rangeBar.style.transform = `scaleX(${val / 100})`;
   }
 }
