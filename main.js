@@ -92,6 +92,7 @@ const setupLayout = () => {
   });
 
   scrub = new RangeBar("#scrub", (value) => {
+    audioPlayer.scrub(value);
     console.log(value);
   });
 

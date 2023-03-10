@@ -1,15 +1,181 @@
 <!DOCTYPE html>
 <html>
   <head>
-    
+      
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PWA Music Player</title>
+
     <style>
       :root{--color-blue-light:#053160;--color-blue-dark:#031e3c;--color-yellow:#ffc80b;--button-height:92px;--slider-position:10%;--speed:0.2s;--font-size:clamp(2.5rem, 3vw, 3.5rem);--primary-color:#ffc80b;--secondary-color:#053160;--terciary-color:#031e3c;--quadriary-color:#ffe96d;--error-color:#d40a0a;--font-bold:600;--font-light:300}*{padding:0;margin:0;box-sizing:border-box;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;-webkit-tap-highlight-color:transparent}body,html{background-color:var(--terciary-color);max-width:100%;height:100vh}body{position:relative;display:flex;flex-direction:column;justify-content:space-between;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen,Ubuntu,Cantarell,"Open Sans","Helvetica Neue",sans-serif;background-color:var(--secondary-color);max-width:800px;height:100vh;margin:0 auto;row-gap:10px}label{color:var(--primary-color);font-size:var(--font-size);font-weight:var(--font-bold);text-transform:uppercase;font-weight:700;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}li label{color:var(--secondary-color)}button{display:flex;align-items:center;justify-content:center;border:none;background-color:transparent;cursor:pointer;max-width:100%;flex:1;padding:10px}button:active,li:active>*{scale:.9}input[type=range]{position:absolute;inset:0;opacity:0}input[type=file]{position:absolute;top:0;left:0;visibility:hidden;pointer-events:none}#info{display:flex;max-height:var(--button-height);flex:1}#info-container{position:absolute;inset:0;top:var(--button-height);bottom:var(--button-height);display:flex;overflow-x:hidden;overflow-y:scroll;background-color:var(--terciary-color);transform:scaleY(0);transform-origin:top;transition:transform var(--speed) ease;z-index:100}#controller{display:flex;justify-content:space-between;align-items:center;gap:10px;flex:1}#scrub{flex:1;max-height:32px}#volume{flex:1}.range{position:relative;display:flex;background-color:var(--terciary-color)}.range-bar{flex:1;transform-origin:left;transform:scaleX(.5);background-color:var(--primary-color);pointer-events:none;width:100%}#menu{display:flex;max-height:var(--button-height);flex:1;justify-self:end}#menu-container{position:absolute;inset:0;bottom:var(--button-height);display:flex;overflow-x:hidden;overflow-y:scroll;background-color:var(--quadriary-color);transform:scaleY(0);transform-origin:bottom;transition:transform var(--speed) ease;z-index:101}#menu-back-button{display:none}#menu-container ul{overflow:hidden;position:absolute;inset:0;display:flex;flex-direction:column;flex:1;list-style:none;background-color:var(--quadriary-color);transform:translateX(100%);transition:var(--speed) ease}#menu-container li{display:grid;grid-template-columns:auto 45px;max-height:72px;cursor:pointer;gap:10px;padding:10px;flex:1}.toggle>*{display:none}
     </style>
     <script>
-      class AudioPlayer{#t;#e=[];#n=0;currentState="pause";callback;constructor(t){this.#t=new Audio,this.callback=t,this.#s()}#s(){this.#t.onended=()=>{this.currentState="ended",this.callback(this.currentState)},this.#t.onpause=()=>{this.currentState="pause",this.callback("pause")},this.#t.onerror=()=>{this.currentState="error",this.callback(this.currentState,this.#t.error)},this.#t.onloadstart=()=>{this.currentState="loading",this.callback(this.currentState)},this.#t.onplaying=()=>{this.currentState="play",this.callback(this.currentState)}}previous(){this.#n--,this.#n<0&&(this.#n=this.#e.length-1),this.play(this.#e[this.#n],this.#e)}async play(t=null,e=null){this.#e=e||this.#e,this.currentTrack=t||this.currentTrack,this.#t.paused||this.#t.pause();try{return this.#t.src=this.#e[this.#n].url,await this.#t.play(),!0}catch(t){return this.currentState="error",!1}}pause(){this.#t.pause()}next(){this.#n++,this.#n>=this.#e.length&&(this.#n=0),this.play(this.#e[this.#n],this.#e)}get currentTrack(){return this.#e[this.#n]}set currentTrack(t){for(let e=0;e<this.#e.length;e++)if(this.#e[e].id===t.id){this.#n=e;break}}get volume(){return this.#t.volume}set volume(t){this.#t.volume=t/100}}class Component{element;callback;SPEED=0;constructor(t=null,e=(()=>{})){this.element=document.querySelector(t),this.callback=e,this.SPEED=parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--speed").replace(/(ms|s)/g,""))}get displayed(){return"initial"===this.element.style.display}set displayed(t){let e;e=t?"initial":"none",this.element.style.display=e}setElement(t){this.element=t}}class Button extends Component{constructor(t,e){super(t,e),this.element&&(this.element.onclick=()=>this.callback())}setElement(t){super.setElement(t),this.element.onclick=()=>this.callback()}get Text(){return this.element.querySelector("label").innerText}set Text(t){this.element.querySelector("label").innerText=t}get color(){return this.element.querySelector("label").style.color}set color(t){this.element.querySelector("label").style.color=t}}class ToggleButton extends Button{#i;#r=0;constructor(t,e){super(t,e),this.#i=this.element.children,this.toggle(0)}toggle(t){this.#i[this.#r].style.display="none",null!==t?this.#r=t:(this.#r++,this.#r>=this.#i.length&&(this.#r=0)),this.#i[this.#r].style.display="block"}}class ListButton extends Button{#a;constructor(t,e){super(null,e),this.#a=t;const n=document.createElement("div"),s=document.querySelector(".list-item").content.cloneNode(!0);s.querySelector("label").innerText=this.#a.name,n.appendChild(s),this.setElement(n.children[0]);const i=n.querySelector(".toggle");"folder"===t.type&&(i.children[0].style.display="initial")}}class Info extends Component{#l;#o;#u=!1;constructor(t,e){super(t,e),this.#l=this.element.querySelector("#info-container"),this.#o=new ToggleButton("#info-button",(()=>{this.#u?this.close():this.open(),this.callback(this.#u)}))}open(){this.#u||(this.#l.style.transform="scaleY(1)",this.#o.toggle(1),this.#u=!0)}close(){this.#u&&(this.#l.style.transform="scaleY(0)",this.#o.toggle(0),this.#u=!1)}update(t){this.#o.text=t.name,this.#o.color="error"===t.type?"var(--error-color)":"var(--primary-color)"}}class Controller extends Component{currentState="pause";#c;#h;#p;constructor(t,e){super(t,e),this.#c=new Button("#previous-button",(()=>{this.callback("previous")})),this.#p=new Button("#next-button",(()=>{this.callback("next")})),this.#h=new ToggleButton("#action-button",(()=>{"loading"!=this.currentState&&("pause"===this.currentState?this.callback("play"):this.callback("pause"))}))}setState(t){this.currentState=t;let e=0;switch(this.currentState){case"play":e=1;break;case"pause":e=0;break;case"loading":e=2;break;case"error":e=4}this.#h.toggle(e)}}class RangeBar extends Component{#d;#m;constructor(t,e){super(t,e),this.#d=this.element.querySelector("input[type='range']"),this.#m=this.element.querySelector(".range-bar"),this.#d.oninput=()=>{this.value=this.#d.value,this.callback(this.value)}}get value(){return parseFloat(this.#d.value)}set value(t){this.#m.style.transform=`scaleX(${t/100})`}}class Menu extends Component{#g;#y;#k;#b;#B=null;#u=!1;constructor(t,e){super(t,e),this.#k=new ToggleButton("#menu-button",(()=>{this.#u?this.close():this.open()})),this.#b=new Button("#menu-back-button",(()=>{const t=this.#y.children.length-1;this.#x(t)})),this.#y=this.element.querySelector("#menu-container")}#f(t){const e=document.createElement("ul");t.forEach((t=>{const n=new ListButton(t,(()=>{"folder"===t.type?this.#f(t.children):this.callback(t)}));e.appendChild(n.element)})),this.#B&&(this.#B.style.transform="translateX(-100%)"),this.#y.appendChild(e),this.#B=e,requestAnimationFrame((()=>this.#B.style.transform="translateX(0)")),this.#y.children.length>1?this.#b.displayed=!0:this.#b.displayed=!1}#x(t=null){if(null!==t){const e=this.#y.children[t];this.#y.removeChild(e),this.#B=this.#y.children[this.#y.children.length-1],this.#B.style.transform="translateX(0)"}else this.#y.innerHTML="",this.#B=null;this.#y.children.length>1?this.#b.displayed=!0:this.#b.displayed=!1}open(){this.#k.toggle(1),this.#y.style.transform="scaleY(1)",this.callback({type:"opening"}),setTimeout((()=>{this.#f(this.#g)}),this.SPEED),this.#u=!0}close(){this.#k.toggle(0),this.#x(),this.#y.style.transform="scaleY(0)",this.#u=!1}setTrail(t){this.#u}get data(){return this.#g}set data(t){this.#g=t}}let t;let e,n,s,i,r,a,l;window.onload=async()=>{await o("https://separated-trusted-lingonberry.glitch.me/"),c(),u()};const o=async e=>{const n=await fetch(e),s=await n.json();t=[...s,{type:"open",name:"open"},{type:"reset",name:"reset"}]},u=()=>{a=new AudioPlayer(((t,s)=>{if(n.setState(t),"error"===t)e.update({name:a.currentTrack.name,type:t,error:s});"error"!=t&&e.update(a.currentTrack)})),a.volume=s.value},c=()=>{e=new Info("#info",(()=>{})),n=new Controller("#controller",(t=>{switch(t){case"play":a.currentTrack?a.play():i.open();break;case"pause":a.pause();break;case"next":a.next();break;case"previous":a.previous()}})),l=new RangeBar("#scrub",(()=>{})),s=new RangeBar("#volume",(t=>{a.volume=t})),i=new Menu("#menu",(async n=>{switch(n.type){case"opening":e.close();break;case"music":case"file":i.close();h(t,n.id);await a.play(n,h(t,n.id));break;case"open":r.click()}})),i.data=t,r=document.querySelector("#file-input"),r.onchange=()=>{}},h=(t,e)=>{let n=null;for(let s=0;s<t.length;s++){const i=t[s];if(i.children?n=h(i.children,e):i.id===e&&(n=t),n)break}return n};
+      class AudioPlayer{#t;#e=[];#n=0;currentState="pause";callback;constructor(t){this.#t=new Audio,this.callback=t,this.#s()}#s(){this.#t.onended=()=>{this.currentState="ended",this.callback(this.currentState)},this.#t.onpause=()=>{this.currentState="pause",this.callback("pause")},this.#t.onerror=()=>{this.currentState="error",this.callback(this.currentState,this.#t.error)},this.#t.onloadstart=()=>{this.currentState="loading",this.callback(this.currentState)},this.#t.onplaying=()=>{this.currentState="play",this.callback(this.currentState)}}previous(){this.#n--,this.#n<0&&(this.#n=this.#e.length-1),this.play(this.#e[this.#n],this.#e)}async play(t=null,e=null){this.#e=e||this.#e,this.currentTrack=t||this.currentTrack,this.#t.paused||this.#t.pause();try{return this.#t.src=this.#e[this.#n].url,await this.#t.play(),!0}catch(t){return this.currentState="error",!1}}pause(){this.#t.pause()}next(){this.#n++,this.#n>=this.#e.length&&(this.#n=0),this.play(this.#e[this.#n],this.#e)}get currentTrack(){return this.#e[this.#n]}set currentTrack(t){for(let e=0;e<this.#e.length;e++)if(this.#e[e].id===t.id){this.#n=e;break}}get volume(){return this.#t.volume}set volume(t){this.#t.volume=t/100}}class Component{element;callback;SPEED=0;constructor(t=null,e=(()=>{})){this.element=document.querySelector(t),this.callback=e,this.SPEED=parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--speed").replace(/(ms|s)/g,""))}get displayed(){return"initial"===this.element.style.display}set displayed(t){let e;e=t?"initial":"none",this.element.style.display=e}setElement(t){this.element=t}}class Button extends Component{constructor(t,e){super(t,e),this.element&&(this.element.onclick=()=>this.callback())}setElement(t){super.setElement(t),this.element.onclick=()=>this.callback()}get Text(){return this.element.querySelector("label").innerText}set Text(t){this.element.querySelector("label").innerText=t}get color(){return this.element.querySelector("label").style.color}set color(t){this.element.querySelector("label").style.color=t}}class ToggleButton extends Button{#i;#r=0;constructor(t,e){super(t,e),this.#i=this.element.children,this.toggle(0)}toggle(t){this.#i[this.#r].style.display="none",null!==t?this.#r=t:(this.#r++,this.#r>=this.#i.length&&(this.#r=0)),this.#i[this.#r].style.display="block"}}class ListButton extends Button{#a;constructor(t,e){super(null,e),this.#a=t;const n=document.createElement("div"),s=document.querySelector(".list-item").content.cloneNode(!0);s.querySelector("label").innerText=this.#a.name,n.appendChild(s),this.setElement(n.children[0]);const i=n.querySelector(".toggle");"folder"===t.type&&(i.children[0].style.display="initial")}}class Info extends Component{#l;#o;#u=!1;constructor(t,e){super(t,e),this.#l=this.element.querySelector("#info-container"),this.#o=new ToggleButton("#info-button",(()=>{this.#u?this.close():this.open(),this.callback(this.#u)}))}open(){this.#u||(this.#l.style.transform="scaleY(1)",this.#o.toggle(1),this.#u=!0)}close(){this.#u&&(this.#l.style.transform="scaleY(0)",this.#o.toggle(0),this.#u=!1)}update(t){this.#o.text=t.name,this.#o.color="error"===t.type?"var(--error-color)":"var(--primary-color)"}}class Controller extends Component{currentState="pause";#c;#h;#p;constructor(t,e){super(t,e),this.#c=new Button("#previous-button",(()=>{this.callback("previous")})),this.#p=new Button("#next-button",(()=>{this.callback("next")})),this.#h=new ToggleButton("#action-button",(()=>{"loading"!=this.currentState&&("pause"===this.currentState?this.callback("play"):this.callback("pause"))}))}setState(t){this.currentState=t;let e=0;switch(this.currentState){case"play":e=1;break;case"pause":e=0;break;case"loading":e=2;break;case"error":e=4}this.#h.toggle(e)}}class RangeBar extends Component{#d;#m;constructor(t,e){super(t,e),this.#d=this.element.querySelector("input[type='range']"),this.#m=this.element.querySelector(".range-bar"),this.#d.oninput=()=>{this.value=this.#d.value,this.callback(this.value)}}get value(){return parseFloat(this.#d.value)}set value(t){this.#m.style.transform=`scaleX(${t/100})`}}class Menu extends Component{#g;#y;#k;#b;#B=null;#u=!1;constructor(t,e){super(t,e),this.#k=new ToggleButton("#menu-button",(()=>{this.#u?this.close():this.open()})),this.#b=new Button("#menu-back-button",(()=>{const t=this.#y.children.length-1;this.#x(t)})),this.#y=this.element.querySelector("#menu-container")}#f(t){const e=document.createElement("ul");t.forEach((t=>{const n=new ListButton(t,(()=>{"folder"===t.type?this.#f(t.children):this.callback(t)}));e.appendChild(n.element)})),this.#B&&(this.#B.style.transform="translateX(-100%)"),this.#y.appendChild(e),this.#B=e,requestAnimationFrame((()=>this.#B.style.transform="translateX(0)")),this.#y.children.length>1?this.#b.displayed=!0:this.#b.displayed=!1}#x(t=null){if(null!==t){const e=this.#y.children[t];this.#y.removeChild(e),this.#B=this.#y.children[this.#y.children.length-1],this.#B.style.transform="translateX(0)"}else this.#y.innerHTML="",this.#B=null;this.#y.children.length>1?this.#b.displayed=!0:this.#b.displayed=!1}open(){this.#k.toggle(1),this.#y.style.transform="scaleY(1)",this.callback({type:"opening"}),setTimeout((()=>{this.#f(this.#g)}),this.SPEED),this.#u=!0}close(){this.#k.toggle(0),this.#x(),this.#y.style.transform="scaleY(0)",this.#u=!1}setTrail(t){this.#u}get data(){return this.#g}set data(t){this.#g=t}}let t;let e,n,s,i,r,a,l;window.onload=async()=>{await o("https://separated-trusted-lingonberry.glitch.me/"),c(),u()};const o=async e=>{const n=await fetch(e),s=await n.json();t=[...s,{type:"open",name:"open"},{type:"reset",name:"reset"}]},u=()=>{a=new AudioPlayer(((t,s)=>{if(n.setState(t),"error"===t)e.update({name:a.currentTrack.name,type:t,error:s});"error"!=t&&e.update(a.currentTrack)})),a.volume=s.value},c=()=>{e=new Info("#info",(()=>{})),n=new Controller("#controller",(t=>{switch(t){case"play":a.currentTrack?a.play():i.open();break;case"pause":a.pause();break;case"next":a.next();break;case"previous":a.previous()}})),l=new RangeBar("#scrub",(t=>{a.scrub(t)})),s=new RangeBar("#volume",(t=>{a.volume=t})),i=new Menu("#menu",(async n=>{switch(n.type){case"opening":e.close();break;case"music":case"file":i.close();h(t,n.id);await a.play(n,h(t,n.id));break;case"open":r.click()}})),i.data=t,r=document.querySelector("#file-input"),r.onchange=()=>{}},h=(t,e)=>{let n=null;for(let s=0;s<t.length;s++){const i=t[s];if(i.children?n=h(i.children,e):i.id===e&&(n=t),n)break}return n};
     </script>
   </head>
   <body>
-    
+      
+    <div id="info">
+      <div id="info-container"></div>
+      <button id="info-button" class="toggle">
+        <label>MUSIC PLAYER</label>
+        <svg
+          width="45px"
+          height="45px"
+          viewBox="0 0 6 6"
+          fill="var(--primary-color)"
+        >
+          <path
+            d="M2.831,1.858l1.802,-1.858l1.03,1.062l-1.716,1.769l1.716,1.77l-1.03,1.062l-1.802,-1.858l-1.801,1.858l-1.03,-1.062l1.716,-1.77l-1.716,-1.769l1.03,-1.062l1.801,1.858Z"
+          />
+        </svg>
+      </button>
+    </div>
+    <div id="controller">
+      <button id="previous-button">
+        <svg
+          width="30%"
+          height="40%"
+          viewBox="0 0 9 12"
+          fill="var(--primary-color)"
+        >
+          <path
+            d="M1.899,6.024l0,4.961l-1.899,-0l0,-10.985l1.899,0l0,4.996l7,-4.978l-0,10.984l-7,-4.978Z"
+          />
+        </svg>
+      </button>
+      <button id="action-button" class="toggle">
+        <svg
+          width="90%"
+          height="100%"
+          viewBox="0 0 23 23"
+          fill="var(--primary-color)"
+        >
+          <path d="M22.164,11.082l-22.164,11.082l0,-22.164l22.164,11.082Z" />
+        </svg>
+        <svg
+          width="90%"
+          height="100%"
+          viewBox="0 0 23 23"
+          fill="var(--primary-color)"
+        >
+          <rect x="-0" y="0" width="9.339" height="22.166" />
+          <rect x="12.825" y="0" width="9.339" height="22.166" />
+        </svg>
+
+        <svg
+          width="90%"
+          height="100%"
+          viewBox="0 0 23 23"
+          fill="var(--terciary-color)"
+        >
+          <rect x="0" y="8.29" width="5.585" height="5.585" />
+          <rect x="8.29" y="8.29" width="5.585" height="5.585" />
+          <rect x="16.58" y="8.29" width="5.585" height="5.585" />
+        </svg>
+        <svg
+          width="90%"
+          height="100%"
+          viewBox="0 0 6 6"
+          fill="var(--error-color)"
+        >
+          <path
+            d="M2.831,1.858l1.802,-1.858l1.03,1.062l-1.716,1.769l1.716,1.77l-1.03,1.062l-1.802,-1.858l-1.801,1.858l-1.03,-1.062l1.716,-1.77l-1.716,-1.769l1.03,-1.062l1.801,1.858Z"
+          />
+        </svg>
+      </button>
+      <button id="next-button">
+        <svg
+          width="30%"
+          height="40%"
+          viewBox="0 0 9 12"
+          fill="var(--primary-color)"
+        >
+          <path
+            d="M7,4.978l-0,-4.96l1.899,-0l-0,10.984l-1.899,0l-0,-4.995l-7,4.978l-0,-10.985l7,4.978Z"
+          />
+        </svg>
+      </button>
+    </div>
+    <div id="volume" class="range">
+      <div class="range-bar"></div>
+      <input type="range" min="0" max="100" value="10" />
+    </div>
+
+    <div id="scrub" class="range">
+      <div class="range-bar"></div>
+      <input type="range" min="0" max="100" value="0" />
+    </div>
+
+    <div id="menu">
+      <div id="menu-container"></div>
+      <button id="menu-back-button" class="back-button">
+        <svg
+          width="100%"
+          height="45px"
+          viewBox="0 0 7 5"
+          fill="var(--primary-color)"
+        >
+          <path
+            d="M3.083,0.855l-0.832,-0.855l-2.251,2.251l2.221,2.279l0.844,-0.844l-1.377,-1.435l1.395,-1.396Z"
+          />
+          <path
+            d="M6.247,0.855l-0.832,-0.855l-2.251,2.251l2.221,2.279l0.844,-0.844l-1.377,-1.435l1.395,-1.396Z"
+          />
+        </svg>
+      </button>
+      <button id="menu-button" class="toggle">
+        <svg
+          width="45px"
+          height="45px"
+          viewBox="0 0 11 11"
+          fill="var(--primary-color)"
+        >
+          <rect x="0" y="0" width="10.355" height="2.609" />
+          <rect x="0" y="3.876" width="10.355" height="2.609" />
+          <rect x="0" y="7.746" width="10.355" height="2.609" />
+        </svg>
+        <svg
+          width="45px"
+          height="45px"
+          viewBox="0 0 6 6"
+          fill="var(--primary-color)"
+        >
+          <path
+            d="M2.831,1.858l1.802,-1.858l1.03,1.062l-1.716,1.769l1.716,1.77l-1.03,1.062l-1.802,-1.858l-1.801,1.858l-1.03,-1.062l1.716,-1.77l-1.716,-1.769l1.03,-1.062l1.801,1.858Z"
+          />
+        </svg>
+      </button>
+    </div>
+
+    <input
+      type="file"
+      id="file-input"
+      multiple
+      accept="audio/*"
+      class="hidden"
+    />
+
+    <template class="list-item">
+      <li>
+        <label>Item default</label>
+        <div class="toggle">
+          <svg
+            width="45px"
+            height="45px"
+            viewBox="0 0 4 5"
+            fill="var(--secondary-color)"
+          >
+            <path
+              d="M0,3.681l1.397,-1.416l-1.397,-1.416l0.838,-0.849l2.236,2.265l-2.236,2.265l-0.838,-0.849Z"
+            />
+          </svg>
+        </div>
+      </li>
+    </template>
+  </body>
+</html>
+
   </body>
 </html>
